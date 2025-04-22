@@ -3,17 +3,17 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { CqrsModule } from '@nestjs/cqrs';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { ConfigService } from '@nestjs/config';
-import { LinkController } from './link.controller';
-import { LinkService } from './link.service';
-import { LinkSchema } from '../database/schemas/link.schema';
-import { CreateShortLinkHandler } from './commands/handlers/create-short-link.handler';
-import { GetOriginalLinkHandler } from './queries/handlers/get-original-link.handler';
+import { UrlController } from './url.controller';
+import { UrlService } from './url.service';
+import { UrlSchema } from '../database/schemas/url.schema';
+import { CreateShortUrlHandler } from './commands/handlers/create-short-url.handler';
+import { GetOriginalUrlHandler } from './queries/handlers/get-original-url.handler';
 import { CacheModule } from '../cache/cache.module';
 import { getConfig } from '../common/config/configuration';
 
 @Module({
   imports: [
-    MongooseModule.forFeature([{ name: 'Link', schema: LinkSchema }]),
+    MongooseModule.forFeature([{ name: 'Url', schema: UrlSchema }]),
     CqrsModule,
     CacheModule,
     ThrottlerModule.forRootAsync({
@@ -30,7 +30,7 @@ import { getConfig } from '../common/config/configuration';
       inject: [ConfigService],
     }),
   ],
-  controllers: [LinkController],
-  providers: [LinkService, CreateShortLinkHandler, GetOriginalLinkHandler],
+  controllers: [UrlController],
+  providers: [UrlService, CreateShortUrlHandler, GetOriginalUrlHandler],
 })
-export class LinksModule {}
+export class UrlModule {}

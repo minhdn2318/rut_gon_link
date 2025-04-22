@@ -1,3 +1,3 @@
-export class GetOriginalLinkQuery {
+export class GetOriginalUrlQuery {
     constructor(public readonly shortCode: string) {}
   }

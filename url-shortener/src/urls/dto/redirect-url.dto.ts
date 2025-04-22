@@ -1,6 +1,6 @@
 import { IsString, IsNotEmpty } from 'class-validator';
 
-export class RedirectLinkDto {
+export class RedirectUrlDto {
   @IsString()
   @IsNotEmpty()
   shortCode: string;

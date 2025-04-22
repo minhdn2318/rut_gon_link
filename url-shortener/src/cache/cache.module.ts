@@ -12,7 +12,7 @@ import { CacheService } from './cache.service';
         const config = getConfig(configService);
         return {
           store: await redisStore({
-            url: configService.get<string>('REDIS_URL', 'redis://localhost:6379'),
+            url: configService.get<string>('REDIS_Url', 'redis://localhost:6379'),
           }),
           ttl: config.cache.ttl,
           isGlobal: true,

@@ -3,15 +3,15 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { ConfigService } from '@nestjs/config';
 import { CacheService } from '../cache/cache.service';
-import { Link } from './interfaces/link.interface';
+import { Url } from './interfaces/url.interface';
 import { retryOperation } from '../common/utils/retry.util';
 import { getConfig } from '../common/config/configuration';
 import * as shortid from 'shortid';
 
 @Injectable()
-export class LinkService {
+export class UrlService {
   constructor(
-    @InjectModel('Link') private readonly linkModel: Model<Link>,
+    @InjectModel('Url') private readonly urlModel: Model<Url>,
     private readonly cacheService: CacheService,
     private readonly configService: ConfigService,
   ) {}
@@ -21,8 +21,8 @@ export class LinkService {
     const shortCode = shortid.generate();
 
     const operation = async () => {
-      const link = new this.linkModel({ shortCode, originalUrl, clicks: 0 });
-      await link.save();
+      const url = new this.urlModel({ shortCode, originalUrl, clicks: 0 });
+      await url.save();
       await this.cacheService.set(`short:${shortCode}`, originalUrl);
       return shortCode;
     };
@@ -38,15 +38,15 @@ export class LinkService {
       const cachedUrl = await this.cacheService.get<string>(`short:${shortCode}`);
       if (cachedUrl) return cachedUrl;
 
-      const link = await this.linkModel.findOneAndUpdate(
+      const url = await this.urlModel.findOneAndUpdate(
         { shortCode },
         { $inc: { clicks: 1 } },
         { new: true },
       );
 
-      if (!link) throw new Error('Link not found');
-      await this.cacheService.set(`short:${shortCode}`, link.originalUrl);
-      return link.originalUrl;
+      if (!url) throw new Error('Link not found');
+      await this.cacheService.set(`short:${shortCode}`, url.originalUrl);
+      return url.originalUrl;
     };
 
     return retryOperation(operation, this.configService);

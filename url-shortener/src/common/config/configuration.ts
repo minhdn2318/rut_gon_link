@@ -2,7 +2,7 @@ import { ConfigService } from '@nestjs/config';
 
 export const getConfig = (configService: ConfigService) => ({
   database: {
-    uri: configService.get<string>('MONGODB_URI', 'mongodb://localhost:27017/link-shortener'),
+    uri: configService.get<string>('MONGODB_URI', 'mongodb://localhost:27017/url-shortener'),
     sharding: configService.get<boolean>('SHARDING_ENABLED', false),
   },
   cache: {

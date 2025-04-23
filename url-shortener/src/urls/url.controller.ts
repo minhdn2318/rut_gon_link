@@ -15,7 +15,7 @@ export class UrlController {
   constructor(
     private readonly commandBus: CommandBus,
     private readonly queryBus: QueryBus,
-    private readonly linkService: UrlService,
+    private readonly urlService: UrlService,
     private readonly configService: ConfigService,
   ) {}
 
@@ -26,7 +26,7 @@ export class UrlController {
     if (config.patterns.cqrs) {
       return this.commandBus.execute(new CreateShortUrlCommand(createLinkDto.originalUrl));
     }
-    return this.linkService.createShortLink(createLinkDto.originalUrl);
+    return this.urlService.createShortLink(createLinkDto.originalUrl);
   }
 
   @Get('short/:shortCode')
@@ -35,7 +35,7 @@ export class UrlController {
     const config = getConfig(this.configService);
     const originalUrl = config.patterns.cqrs
       ? await this.queryBus.execute(new GetOriginalUrlQuery(redirectLinkDto.shortCode))
-      : await this.linkService.getOriginalUrl(redirectLinkDto.shortCode);
+      : await this.urlService.getOriginalUrl(redirectLinkDto.shortCode);
     return res.redirect(originalUrl);
   }
 }

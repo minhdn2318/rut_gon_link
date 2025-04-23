@@ -1,26 +1,41 @@
 import { Injectable } from '@nestjs/common';
-import { Inject } from '@nestjs/common';
-import { Cache } from 'cache-manager';
 import { ConfigService } from '@nestjs/config';
-import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { Redis } from 'ioredis';
 import { getConfig } from '../common/config/configuration';
 
 @Injectable()
 export class CacheService {
-  constructor(
-    @Inject(CACHE_MANAGER) private cacheManager: Cache,
-    private configService: ConfigService,
-  ) {}
+  private redis: Redis;
 
-  async get<T>(key: string): Promise<T | undefined> {
+  constructor(private configService: ConfigService) {
     const config = getConfig(this.configService);
-    if (!config.cache.enabled) return undefined;
-    return this.cacheManager.get<T>(key);
+    this.redis = new Redis({
+      host: config.cache.host,
+      port: config.cache.port,
+    });
   }
 
-  async set<T>(key: string, value: T, ttl?: number): Promise<void> {
+  async get(key: string): Promise<string | null> {
     const config = getConfig(this.configService);
-    if (!config.cache.enabled) return;
-    await this.cacheManager.set(key, value, ttl);
+    if (!config.cache.enabled) 
+      return undefined;
+    return this.redis.get(key);
+  }
+
+  async set(key: string, value: string, ttlInSeconds?: number): Promise<void> {
+    const config = getConfig(this.configService);
+    ttlInSeconds = config.cache.ttl;
+    console.log('get ttlInSeconds completed');
+    if (!config.cache.enabled) 
+      return;
+    console.log('start set cache');
+    const result = await this.redis.set(key, value, 'EX', ttlInSeconds);
+    console.log(result);
+    console.log('start set cache');
+
+  }
+
+  async del(key: string): Promise<void> {
+    await this.redis.del(key);
   }
 }

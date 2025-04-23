@@ -8,6 +8,8 @@ export const getConfig = (configService: ConfigService) => ({
   cache: {
     enabled: configService.get<boolean>('CACHE_ENABLED', true),
     ttl: configService.get<number>('CACHE_TTL', 3600), // 1 hour
+    host: configService.get<string>('REDIS_HOST', 'redis'),
+    port: configService.get<number>('REDIS_PORT', 6379),
   },
   patterns: {
     cqrs: configService.get<boolean>('CQRS_ENABLED', true),

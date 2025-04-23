@@ -25,13 +25,9 @@ export class CacheService {
   async set(key: string, value: string, ttlInSeconds?: number): Promise<void> {
     const config = getConfig(this.configService);
     ttlInSeconds = config.cache.ttl;
-    console.log('get ttlInSeconds completed');
     if (!config.cache.enabled) 
       return;
-    console.log('start set cache');
     const result = await this.redis.set(key, value, 'EX', ttlInSeconds);
-    console.log(result);
-    console.log('start set cache');
 
   }
 

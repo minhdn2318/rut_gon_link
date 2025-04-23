@@ -36,6 +36,8 @@ export class UrlController {
     const originalUrl = config.patterns.cqrs
       ? await this.queryBus.execute(new GetOriginalUrlQuery(redirectLinkDto.shortCode))
       : await this.urlService.getOriginalUrl(redirectLinkDto.shortCode);
-    return res.redirect(originalUrl);
+
+    
+    return res.send(originalUrl);
   }
 }

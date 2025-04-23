@@ -22,11 +22,8 @@ export class UrlService {
 
     const operation = async () => {
       const url = new this.urlModel({ shortCode, originalUrl, clicks: 0 });
-      console.log(url);
       await url.save();
-      console.log('url save completed');
       await this.cacheService.set(`short:${shortCode}`, originalUrl);
-      console.log('url save cache completed');
       return shortCode;
     };
 
@@ -50,6 +47,7 @@ export class UrlService {
 
       if (!url) throw new Error('Link not found');
       await this.cacheService.set(`short:${shortCode}`, url.originalUrl);
+      console.log(url.originalUrl);
       return url.originalUrl;
     };
 

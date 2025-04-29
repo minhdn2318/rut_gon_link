@@ -23,8 +23,9 @@ RUN npm install
 COPY . .
 
 # Build ứng dụng
-
 RUN npm run build
+
+ENV NODE_ENV=production
 
 # Mở port 3000
 

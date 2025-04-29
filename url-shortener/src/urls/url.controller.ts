@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Get, Param, Res } from '@nestjs/common';
+import { Controller, Post, Body, Get, Param, Res, UseGuards, UseFilters } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { ConfigService } from '@nestjs/config';
 import { CreateUrlDto } from './dto/create-url.dto';
@@ -6,10 +6,12 @@ import { RedirectUrlDto } from './dto/redirect-url.dto';
 import { CreateShortUrlCommand } from './commands/create-short-url.command';
 import { GetOriginalUrlQuery } from './queries/get-original-url.query';
 import { UrlService } from './url.service';
-import { RateLimit } from '../common/decorators/rate-limit.decorator';
 import { getConfig } from '../common/config/configuration';
 import { Response } from 'express';
+import { CustomRateLimitGuard } from '../rate-limit/rate-limit.guard';
+import { CircuitBreakerFilter } from '../common/filters/circuit-breaker.filter'
 
+@UseGuards(CustomRateLimitGuard)
 @Controller()
 export class UrlController {
   constructor(
@@ -20,7 +22,7 @@ export class UrlController {
   ) {}
 
   @Post('create')
-  @RateLimit(new ConfigService()) // Pass ConfigService instance
+  @UseFilters(CircuitBreakerFilter)
   async create(@Body() createLinkDto: CreateUrlDto): Promise<string> {
     const config = getConfig(this.configService);
     if (config.patterns.cqrs) {
@@ -30,14 +32,19 @@ export class UrlController {
   }
 
   @Get('short/:shortCode')
-  @RateLimit(new ConfigService()) // Pass ConfigService instance
+  @UseFilters(CircuitBreakerFilter)
   async redirect(@Param() redirectLinkDto: RedirectUrlDto, @Res() res: Response) {
     const config = getConfig(this.configService);
     const originalUrl = config.patterns.cqrs
       ? await this.queryBus.execute(new GetOriginalUrlQuery(redirectLinkDto.shortCode))
       : await this.urlService.getOriginalUrl(redirectLinkDto.shortCode);
 
-    
     return res.send(originalUrl);
+  }
+
+  @Get('test-circuit-breaker')
+  @UseFilters(CircuitBreakerFilter)
+  async testCircuitBreaker() {
+    throw new Error('Simulated error for circuit breaker testing');
   }
 }

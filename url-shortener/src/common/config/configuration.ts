@@ -15,7 +15,7 @@ export const getConfig = (configService: ConfigService) => ({
     cqrs: configService.get<boolean>('CQRS_ENABLED', true),
     retry: configService.get<boolean>('RETRY_ENABLED', true),
     circuitBreaker: configService.get<boolean>('CIRCUIT_BREAKER_ENABLED', true),
-    rateLimiting: configService.get<boolean>('RATE_LIMITING_ENABLED', true),
+    rateLimiting: configService.get<boolean>('RATE_LIMIT_ENABLED', true),
   },
   rateLimit: {
     ttl: configService.get<number>('RATE_LIMIT_TTL', 60), // 1 minute

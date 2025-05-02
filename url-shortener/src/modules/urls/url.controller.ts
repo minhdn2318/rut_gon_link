@@ -6,12 +6,9 @@ import { RedirectUrlDto } from './dto/redirect-url.dto';
 import { CreateShortUrlCommand } from './commands/create-short-url.command';
 import { GetOriginalUrlQuery } from './queries/get-original-url.query';
 import { UrlService } from './url.service';
-import { getConfig } from '../common/config/configuration';
+import { getConfig } from '../../common/config/configuration';
 import { Response } from 'express';
-import { CustomRateLimitGuard } from '../rate-limit/rate-limit.guard';
-import { CircuitBreakerFilter } from '../common/filters/circuit-breaker.filter'
 
-@UseGuards(CustomRateLimitGuard)
 @Controller()
 export class UrlController {
   constructor(
@@ -22,9 +19,9 @@ export class UrlController {
   ) {}
 
   @Post('create')
-  @UseFilters(CircuitBreakerFilter)
   async create(@Body() createLinkDto: CreateUrlDto): Promise<string> {
     const config = getConfig(this.configService);
+    console.log("requesting");
     if (config.patterns.cqrs) {
       return this.commandBus.execute(new CreateShortUrlCommand(createLinkDto.originalUrl));
     }
@@ -32,7 +29,6 @@ export class UrlController {
   }
 
   @Get('short/:shortCode')
-  @UseFilters(CircuitBreakerFilter)
   async redirect(@Param() redirectLinkDto: RedirectUrlDto, @Res() res: Response) {
     const config = getConfig(this.configService);
     const originalUrl = config.patterns.cqrs
@@ -42,9 +38,4 @@ export class UrlController {
     return res.send(originalUrl);
   }
 
-  @Get('test-circuit-breaker')
-  @UseFilters(CircuitBreakerFilter)
-  async testCircuitBreaker() {
-    throw new Error('Simulated error for circuit breaker testing');
-  }
 }

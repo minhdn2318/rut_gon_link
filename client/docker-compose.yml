@@ -1,0 +1,20 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - '4000:3000'
+    env_file:
+      - production.env
+    environment:
+      - NODE_ENV=production
+    volumes:
+      - ./production.env:/app/.env:ro
+    networks:
+      - client-network
+    restart: unless-stopped
+
+networks:
+  client-network:
+    driver: bridge

@@ -4,8 +4,8 @@ import { Model } from 'mongoose';
 import { ConfigService } from '@nestjs/config';
 import { CacheService } from '../cache/cache.service';
 import { Url } from './interfaces/url.interface';
-import { retryOperation } from '../common/utils/retry.util';
-import { getConfig } from '../common/config/configuration';
+import { retryOperation } from '../../common/utils/retry.util';
+import { getConfig } from '../../common/config/configuration';
 import * as shortid from 'shortid';
 
 @Injectable()

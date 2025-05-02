@@ -2,6 +2,8 @@ import { Injectable, ExecutionContext, HttpException, HttpStatus } from '@nestjs
 import { ThrottlerGuard, ThrottlerStorageService, ThrottlerModuleOptions } from '@nestjs/throttler';
 import { Reflector } from '@nestjs/core';
 import { ConfigService } from '@nestjs/config';
+import { getConfig } from '../../common/config/configuration';
+
 
 @Injectable()
 export class CustomRateLimitGuard extends ThrottlerGuard {
@@ -15,8 +17,8 @@ export class CustomRateLimitGuard extends ThrottlerGuard {
   }
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const isEnabled = this.configService.get('RATE_LIMIT_ENABLED') === 'true';
-    if (!isEnabled) {
+    const config = getConfig(this.configService);
+    if (!config.rateLimit.rateLimiting) {
       return true;
     }
     return super.canActivate(context);

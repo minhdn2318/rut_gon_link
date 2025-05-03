@@ -10,8 +10,8 @@ export class AppController {
 
   @Post('create')
   async create(@Query ('url') url : string) {
-    const res = await this.appService.createShortUrl(url);
-    return res.data;
+    const shortCode = await this.appService.createShortUrl(url);
+    return shortCode;
   }
 
   @Get('short/:id')

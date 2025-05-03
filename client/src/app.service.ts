@@ -13,12 +13,12 @@ export class AppService {
     private readonly configService: ConfigService
   ) {}
 
-  async createShortUrl(originUrl : string){
+  async createShortUrl(originUrl : string) : Promise<string> {
     const config = getConfig(this.configService);
     const url = `${config.server.doMain}/create`;
     try 
     {
-      return this.circuitBreakerService.execute(() =>
+      const response = await this.circuitBreakerService.execute(() =>
         firstValueFrom(        
           this.httpService.post(url, {
           originalUrl: originUrl,
@@ -26,9 +26,11 @@ export class AppService {
           headers: { 'Content-Type': 'application/json' },
         })
       ));
+      return response.data;
 
     } catch (error) {
-      return { message: 'Error while creating data', error: error.message };
+      console.error('Error:', error.response?.data || error.message);
+      throw error;
     }
   }
 
@@ -37,9 +39,10 @@ export class AppService {
     const url = `${config.server.doMain}/short/${shortUrl}`;
     try 
     {
-      return this.circuitBreakerService.execute(() =>
+      const response = await this.circuitBreakerService.execute(() =>
         firstValueFrom(this.httpService.get(url))
       );
+      return response.data;
     } catch (error) {
       console.error('Error:', error.response?.data || error.message);
       throw error;

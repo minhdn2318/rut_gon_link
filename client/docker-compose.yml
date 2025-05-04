@@ -4,7 +4,7 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - '4000:3000'
+      - '4000:4000'
     env_file:
       - production.env
     environment:
@@ -12,9 +12,10 @@ services:
     volumes:
       - ./production.env:/app/.env:ro
     networks:
-      - client-network
+      - url-shortener-network
     restart: unless-stopped
 
 networks:
-  client-network:
+  url-shortener-network:
     driver: bridge
+    external: true

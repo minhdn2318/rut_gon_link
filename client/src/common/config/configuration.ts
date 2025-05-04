@@ -1,6 +1,9 @@
 import { ConfigService } from '@nestjs/config';
 
 export const getConfig = (configService: ConfigService) => ({
+  enviroment: {
+    mode: configService.get<string>('NODE_ENV', 'development'),
+  },
   server: {
     doMain: configService.get<string>('URL_SHORTENER_DOMAIN', 'http://riot360.net:5000'),
   },

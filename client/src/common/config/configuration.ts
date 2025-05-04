@@ -14,7 +14,7 @@ export const getConfig = (configService: ConfigService) => ({
     resetTimeout: configService.get<number>('CIRCUIT_BREAKER_RESET_TIMEOUT', 10000),
   },
   rateLimit: {
-    rateLimiting: configService.get<boolean>('RATE_LIMIT_ENABLED', true),
+    rateLimiting: configService.get<string>('RATE_LIMIT_ENABLED', 'true') === 'true',
     ttl: configService.get<number>('RATE_LIMIT_TTL', 60), // 1 minute
     limit: configService.get<number>('RATE_LIMIT_COUNT', 100),
   },

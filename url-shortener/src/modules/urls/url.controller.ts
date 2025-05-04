@@ -21,7 +21,6 @@ export class UrlController {
   @Post('create')
   async create(@Body() createLinkDto: CreateUrlDto): Promise<string> {
     const config = getConfig(this.configService);
-    console.log("requesting");
     if (config.patterns.cqrs) {
       return this.commandBus.execute(new CreateShortUrlCommand(createLinkDto.originalUrl));
     }

@@ -16,8 +16,6 @@ export class AppService {
   async createShortUrl(originUrl : string) : Promise<string> {
     const config = getConfig(this.configService);
     const url = `${config.server.doMain}/create`;
-    console.log(originUrl);
-    console.log(url);
     try 
     {
       if(config.circuitBreaker.circuitBreaker == true){

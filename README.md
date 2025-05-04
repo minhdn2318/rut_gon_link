@@ -86,7 +86,7 @@ $ npm run test:cov
 - **Tốc độ tăng gấp 10 lần** so với bản cũ
 - **Không có spike lớn** khi tăng tải
 - **Tận dụng cache Redis hiệu quả giúp giảm thiểu đọc từ DB**
-- kết quả kiểm thử để trong folder **performance_test**
+- kết quả kiểm thử để trong folder **test_performance**
 ---
 
 ## 📦 Triển khai với Docker 

@@ -1,98 +1,121 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+# 🔗 Hệ Thống Rút Gọn Link - ReactJS + NestJS CQRS
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## 🧩 Tổng quan
 
-## Description
+Đây là hệ thống rút gọn URL của nhóm 1, môn Kiến trúc phần mềm hiện đại (mã học phần: 2425II_INT6017), Trường Đại học Quốc gia Hà Nội. Hệ thống được xây dựng dựa trên kiến trúc **CQRS (Command Query Responsibility Segregation)** – tách biệt rõ ràng giữa các thao tác ghi và đọc dữ liệu – nhằm tăng tính mở rộng và hiệu quả xử lý. Ngoài ra, hệ thống còn sử dụng **Redis** làm bộ nhớ đệm (**cache**) giúp tăng tốc độ phản hồi các truy vấn thường xuyên, giảm tải cho cơ sở dữ liệu, và nâng cao hiệu năng tổng thể. Hệ thống sử dụng:
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+- **Frontend**: ReactJS
+- **Backend**: NestJS
+- **Cache**: Redis (`cache-manager`)
+- **Database**: MongoDB
+- **Triển khai**: Docker
+- **Hiệu năng**: Kiểm thử bằng JMeter cho kết quả tăng 10 lần sau khi tối ưu.
 
-## Project setup
+---
+
+## ⚙️ Kiến trúc hệ thống
+
+- `Command`: Ghi dữ liệu vào MongoDB (tạo URL, xóa URL, cập nhật).
+- `Query`: Đọc dữ liệu từ Redis (ưu tiên cache), nếu không có thì fallback MongoDB.
+- **Redis cache** giúp giảm tải database và tăng tốc độ truy xuất link gốc.
+
+---
+
+## 🛠 Cài đặt & Khởi động
+
+### 1. Cài đặt gói phụ thuộc
 
 ```bash
 $ npm install
 ```
 
-## Compile and run the project
+### 2. Khởi động ứng dụng
 
 ```bash
-# development
+# Chạy ở chế độ development
 $ npm run start
 
-# watch mode
+# Chạy ở chế độ watch mode
 $ npm run start:dev
 
-# production mode
+# Chạy ở chế độ production
 $ npm run start:prod
 ```
 
-## Run tests
+---
+
+## ✅ Kiểm thử
 
 ```bash
-# unit tests
+# Kiểm thử đơn vị (unit test)
 $ npm run test
 
-# e2e tests
+# Kiểm thử đầu cuối (e2e test)
 $ npm run test:e2e
 
-# test coverage
+# Kiểm tra độ bao phủ mã nguồn
 $ npm run test:cov
 ```
 
-## Deployment
+---
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+## 🧪 Kiểm thử hiệu năng với JMeter
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+### ⚡ Thử nghiệm tải bằng JMeter
+
+- Kịch bản: Gửi yêu cầu POST để rút gọn link với 100 người dùng đồng thời.
+- Hạ tầng: 
+  - Redis server chạy với PID `44711` - sử dụng ~0.3% RAM
+  - Tổng RAM sử dụng: ~1.14GB/1.92GB
+  - Hệ thống trung bình tải chỉ ~0.2
+
+### 📉 Kết quả bản base (chưa tối ưu)
+
+![Hiệu năng bản base](test tải/response-time-100CCU.png)
+
+- **Thời gian phản hồi trung bình**: ~2.000–4.000ms
+- **Có nhiều spike lên tới 8.000–12.000ms**
+- **Không phù hợp cho hệ thống lớn**
+
+---
+
+## 🚀 Sau khi áp dụng CQRS + Redis cache
+
+- **Thời gian phản hồi giảm xuống còn ~200–300ms**
+- **Tốc độ tăng gấp 10 lần** so với bản cũ
+- **Không có spike lớn** khi tăng tải
+- **Tận dụng cache Redis hiệu quả giúp giảm thiểu đọc từ DB**
+- kết quả kiểm thử để trong folder **performance_test**
+---
+
+## 📦 Triển khai với Docker 
+
+```bash
+# Build Docker image
+$ docker build -t url-shortener .
+
+# Chạy container
+$ docker run -p 3000:3000 url-shortener
+```
+
+> Hệ thống có thể dễ dàng mở rộng ngang bằng cách thêm replica backend, sử dụng Redis cluster nếu cần.
+
+---
+
+## ☁ Triển khai lên cloud (tùy chọn)
+
+> Nếu bạn cần triển khai ứng dụng NestJS lên AWS một cách dễ dàng, hãy thử **[Mau](https://mau.nestjs.com)**:
 
 ```bash
 $ npm install -g @nestjs/mau
 $ mau deploy
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+---
 
-## Resources
+## 📚 Tài liệu tham khảo
 
-Check out a few resources that may come in handy when working with NestJS:
-
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+- [NestJS CQRS Module](https://docs.nestjs.com/recipes/cqrs)
+- [Cache Manager Redis](https://www.npmjs.com/package/cache-manager-ioredis)
+- [JMeter CLI Testing](https://jmeter.apache.org/usermanual/)

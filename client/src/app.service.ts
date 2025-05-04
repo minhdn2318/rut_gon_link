@@ -16,17 +16,31 @@ export class AppService {
   async createShortUrl(originUrl : string) : Promise<string> {
     const config = getConfig(this.configService);
     const url = `${config.server.doMain}/create`;
+    console.log(originUrl);
+    console.log(url);
     try 
     {
-      const response = await this.circuitBreakerService.execute(() =>
-        firstValueFrom(        
-          this.httpService.post(url, {
-          originalUrl: originUrl,
-        }, {
-          headers: { 'Content-Type': 'application/json' },
-        })
-      ));
-      return response.data;
+      if(config.circuitBreaker.circuitBreaker == true){
+          const response = await this.circuitBreakerService.execute(() =>
+          firstValueFrom(        
+            this.httpService.post(url, {
+            originalUrl: originUrl,
+          }, {
+            headers: { 'Content-Type': 'application/json' },
+          })
+        ));
+        return response.data;
+      }
+      else{
+        const response = await firstValueFrom(        
+            this.httpService.post(url, {
+            originalUrl: originUrl,
+          }, {
+            headers: { 'Content-Type': 'application/json' },
+          })
+        );
+        return response.data;
+      }
 
     } catch (error) {
       console.error('Error:', error.response?.data || error.message);
@@ -39,10 +53,16 @@ export class AppService {
     const url = `${config.server.doMain}/short/${shortUrl}`;
     try 
     {
+      if(config.circuitBreaker.circuitBreaker == true){
       const response = await this.circuitBreakerService.execute(() =>
         firstValueFrom(this.httpService.get(url))
       );
       return response.data;
+      }
+      else {
+        const response = await firstValueFrom(this.httpService.get(url));
+        return response.data;
+      }
     } catch (error) {
       console.error('Error:', error.response?.data || error.message);
       throw error;

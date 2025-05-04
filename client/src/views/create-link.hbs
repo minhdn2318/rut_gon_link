@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Shortlink</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(120deg, #f8fafc 0%, #e0e7ff 100%);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 600px;
+            margin: 40px auto;
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+            padding: 32px 40px 40px 40px;
+        }
+        h1, h2 {
+            text-align: center;
+            color: #3730a3;
+            margin-bottom: 24px;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+        label {
+            font-weight: 500;
+            color: #4b5563;
+        }
+        input[type="text"] {
+            padding: 10px 14px;
+            border: 1px solid #c7d2fe;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border 0.2s;
+        }
+        input[type="text"]:focus {
+            border: 1.5px solid #6366f1;
+            outline: none;
+        }
+        button[type="submit"] {
+            background: linear-gradient(90deg, #6366f1 0%, #818cf8 100%);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 0;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+            box-shadow: 0 2px 8px rgba(99,102,241,0.08);
+        }
+        button[type="submit"]:hover {
+            background: linear-gradient(90deg, #4f46e5 0%, #6366f1 100%);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #f9fafb;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(99,102,241,0.04);
+        }
+        th, td {
+            padding: 12px 10px;
+            text-align: center;
+        }
+        th {
+            background: #6366f1;
+            color: #fff;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+        tr:nth-child(even) {
+            background: #eef2ff;
+        }
+        tr:nth-child(odd) {
+            background: #fff;
+        }
+        td a {
+            color: #2563eb;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+        td a:hover {
+            color: #7c3aed;
+            text-decoration: underline;
+        }
+        td .error-x {
+            color: #ef4444;
+            font-size: 1.3rem;
+            font-weight: bold;
+            display: inline-block;
+            vertical-align: middle;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Create a Shortlink</h1>
+        <form action="/create" method="POST">
+            <label for="url">Enter URL:</label>
+            <input type="text" id="url" name="url" value="https://" required>
+            <button type="submit">Create</button>
+        </form>
+
+        <h2>Generated Shortlinks</h2>
+        <table id="shortlinks-table" border="1">
+            <thead>
+                <tr>
+                    <th>STT</th>
+                    <th>Original URL</th>
+                    <th>Shortlink</th>
+                    <th>Created At</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Rows will be dynamically added here -->
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        document.querySelector('form').addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const url = document.querySelector('#url').value.trim();
+            // Validate URL
+            const urlPattern = /^(https?:\/\/)[\w\-]+(\.[\w\-]+)+([\w.,@?^=%&:/~+#\-]*[\w@?^=%&/~+#\-])?$/i;
+            if (!urlPattern.test(url)) {
+                alert('Vui lòng nhập đúng định dạng đường dẫn (bắt đầu bằng http:// hoặc https://)');
+                return;
+            }
+
+            try {
+                const response = await fetch('/create', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ url }),
+                });
+
+                const table = document.querySelector('#shortlinks-table tbody');
+
+                if (response.ok) {
+                    const result = await response.json();
+                    const newRow = document.createElement('tr');
+                    const createdAt = new Date().toLocaleString();
+                    newRow.innerHTML = `
+                        <td>${table.rows.length + 1}</td>
+                        <td>${url}</td>
+                        <td><a href="/short/${result.shortCode}" target="_blank">/${result.shortCode}</a></td>
+                        <td>${createdAt}</td>
+                    `;
+                    table.prepend(newRow);
+
+                    // Update STT for all rows
+                    Array.from(table.rows).forEach((row, index) => {
+                        row.cells[0].textContent = index + 1;
+                    });
+                } else {
+                    const newRow = document.createElement('tr');
+                    newRow.innerHTML = `
+                        <td>${table.rows.length + 1}</td>
+                        <td>${url}</td>
+                        <td style="color: red; font-weight: bold;">X</td>
+                        <td>-</td>
+                    `;
+                    table.prepend(newRow);
+
+                    // Update STT for all rows
+                    Array.from(table.rows).forEach((row, index) => {
+                        row.cells[0].textContent = index + 1;
+                    });
+
+                    const errorText = await response.text();
+                    console.error('Error:', errorText);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        });
+    </script>
+</body>
+</html>

@@ -4,7 +4,7 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - '5000:3000'
+      - '5000:5000'
     env_file:
       - production.env
     environment:
@@ -92,6 +92,7 @@ services:
 networks:
   url-shortener-network:
     driver: bridge
+    external: true
 
 volumes:
   redis-data:

@@ -27,9 +27,9 @@ RUN npm run build
 
 ENV NODE_ENV=production
 
-# Mở port 3000
+# Mở port 5000
 
-EXPOSE 3000
+EXPOSE 5000
 
 # Chạy ứng dụng
 

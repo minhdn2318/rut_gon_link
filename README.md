@@ -1,121 +1,116 @@
-
 # 🔗 Hệ Thống Rút Gọn Link - ReactJS + NestJS CQRS
 
+## 📋 Mục lục
+1. [🧩 Tổng quan](#-tổng-quan)
+2. [⚙️ Kiến trúc hệ thống](#-kiến-trúc-hệ-thống)
+3. [🛠 Cài đặt & Khởi động](#-cài-đặt--khởi-động)
+4. [✅ Kiểm thử](#-kiểm-thử)
+5. [🧪 Kiểm thử hiệu năng với JMeter](#-kiểm-thử-hiệu-năng-với-jmeter)
+6. [📦 Triển khai với Docker](#-triển-khai-với-docker)
+7. [☁ Triển khai lên cloud (tùy chọn)](#-triển-khai-lên-cloud-tùy-chọn)
+8. [📐 Các mẫu thiết kế](#-các-mẫu-thiết-kế)
+9. [📚 Tài liệu tham khảo](#-tài-liệu-tham-khảo)
+
 ## 🧩 Tổng quan
-
-Đây là hệ thống rút gọn URL của nhóm 1, môn Kiến trúc phần mềm hiện đại (mã học phần: 2425II_INT6017), Trường Đại học Quốc gia Hà Nội. Hệ thống được xây dựng dựa trên kiến trúc **CQRS (Command Query Responsibility Segregation)** – tách biệt rõ ràng giữa các thao tác ghi và đọc dữ liệu – nhằm tăng tính mở rộng và hiệu quả xử lý. Ngoài ra, hệ thống còn sử dụng **Redis** làm bộ nhớ đệm (**cache**) giúp tăng tốc độ phản hồi các truy vấn thường xuyên, giảm tải cho cơ sở dữ liệu, và nâng cao hiệu năng tổng thể. Hệ thống sử dụng:
-
-- **Frontend**: ReactJS
-- **Backend**: NestJS
-- **Cache**: Redis (`cache-manager`)
-- **Database**: MongoDB
-- **Triển khai**: Docker
-- **Hiệu năng**: Kiểm thử bằng JMeter cho kết quả tăng 10 lần sau khi tối ưu.
-
----
+Hệ thống rút gọn URL xây dựng dựa trên kiến trúc **CQRS (Command Query Responsibility Segregation)** và **Redis cache**, giúp tăng tốc độ phản hồi và hiệu năng.
 
 ## ⚙️ Kiến trúc hệ thống
-
-- `Command`: Ghi dữ liệu vào MongoDB (tạo URL, xóa URL, cập nhật).
-- `Query`: Đọc dữ liệu từ Redis (ưu tiên cache), nếu không có thì fallback MongoDB.
-- **Redis cache** giúp giảm tải database và tăng tốc độ truy xuất link gốc.
-
----
+- `Command`: Thao tác ghi với MongoDB.
+- `Query`: Đọc từ Redis, fallback MongoDB.
+- **Redis cache**: Tăng tốc đọc, giảm tải database.
 
 ## 🛠 Cài đặt & Khởi động
-
 ### 1. Cài đặt gói phụ thuộc
-
 ```bash
-$ npm install
+npm install
 ```
 
 ### 2. Khởi động ứng dụng
-
 ```bash
-# Chạy ở chế độ development
-$ npm run start
-
-# Chạy ở chế độ watch mode
-$ npm run start:dev
-
-# Chạy ở chế độ production
-$ npm run start:prod
+npm run start        # development
+npm run start:dev    # watch mode
+npm run start:prod   # production
 ```
-
----
 
 ## ✅ Kiểm thử
-
 ```bash
-# Kiểm thử đơn vị (unit test)
-$ npm run test
-
-# Kiểm thử đầu cuối (e2e test)
-$ npm run test:e2e
-
-# Kiểm tra độ bao phủ mã nguồn
-$ npm run test:cov
+npm run test         # unit test
+npm run test:e2e     # end-to-end test
+npm run test:cov     # coverage
 ```
-
----
 
 ## 🧪 Kiểm thử hiệu năng với JMeter
+### ⚡ Thử nghiệm tải:
+- Gửi POST với các ngưỡng 100, 200, 400, 1000 người dùng đồng thời (CCU).
+- Redis ~0.3% RAM | Tổng RAM ~1.14GB/1.92GB | Load ~0.2
 
-### ⚡ Thử nghiệm tải bằng JMeter
+### 🖥 Cấu hình hệ thống test
 
-- Kịch bản: Gửi yêu cầu POST để rút gọn link với 100 người dùng đồng thời.
-- Hạ tầng: 
-  - Redis server chạy với PID `44711` - sử dụng ~0.3% RAM
-  - Tổng RAM sử dụng: ~1.14GB/1.92GB
-  - Hệ thống trung bình tải chỉ ~0.2
+- Máy ảo KVM
 
-### 📉 Kết quả bản base (chưa tối ưu)
+- RAM: 2GB (sử dụng ~1.14GB khi test)
 
-![Hiệu năng bản base](test tải/response-time-100CCU.png)
+- CPU: 2 vCPU
 
-- **Thời gian phản hồi trung bình**: ~2.000–4.000ms
-- **Có nhiều spike lên tới 8.000–12.000ms**
-- **Không phù hợp cho hệ thống lớn**
+- Disk: SSD 40GB
 
----
+- Network Interface: eth0 (MTU 1500), không xác định tốc độ do giới hạn ảo hóa (ethtool không trả về speed)
 
-## 🚀 Sau khi áp dụng CQRS + Redis cache
+- OS: Ubuntu 24.04 LTS
 
-- **Thời gian phản hồi giảm xuống còn ~200–300ms**
-- **Tốc độ tăng gấp 10 lần** so với bản cũ
-- **Không có spike lớn** khi tăng tải
-- **Tận dụng cache Redis hiệu quả giúp giảm thiểu đọc từ DB**
-- kết quả kiểm thử để trong folder **test_performance**
----
+### 📉 Kết quả bản base:
 
-## 📦 Triển khai với Docker 
+- ![Hiệu năng bản base](test tải/response-time-100CCU.png)
 
+- Phản hồi trung bình: 2.000–4.000ms
+
+- Spike cao: 8.000–12.000ms
+
+- Ngưỡng chịu tải: ~80 request/s
+
+### 🚀 Sau tối ưu CQRS + Redis:
+
+- Phản hồi: ~200–300ms
+
+- Tăng hiệu suất ~8 lần
+
+- Không còn spike lớn
+
+- Ngưỡng chịu tải mới: ~500 request/s
+
+## 📦 Triển khai với Docker
 ```bash
-# Build Docker image
-$ docker build -t url-shortener .
-
-# Chạy container
-$ docker run -p 3000:3000 url-shortener
+docker build -t url-shortener .
+docker run -p 3000:3000 url-shortener
 ```
-
-> Hệ thống có thể dễ dàng mở rộng ngang bằng cách thêm replica backend, sử dụng Redis cluster nếu cần.
-
----
+> Có thể mở rộng ngang bằng cách scale backend, dùng Redis cluster.
 
 ## ☁ Triển khai lên cloud (tùy chọn)
-
-> Nếu bạn cần triển khai ứng dụng NestJS lên AWS một cách dễ dàng, hãy thử **[Mau](https://mau.nestjs.com)**:
-
 ```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+npm install -g @nestjs/mau
+mau deploy
 ```
 
----
+## 📐 Các mẫu thiết kế
+
+### ✅ CQRS (Command & Query Responsibility Segregation)
+- Tách rõ ghi và đọc => tối ưu hoá xử lý.
+
+### 🧠 Caching (Redis)
+- Truy vấn đọc từ Redis trước, tăng tốc độ và giảm tải MongoDB.
+
+### 🔃 Rate Limiting (Giới hạn tần suất truy cập)
+- Tránh abuse hệ thống (ví dụ spam POST link).
+- Thường dùng middleware (VD: `nestjs-rate-limiter`, `express-rate-limit`).
+
+### 🛡 Circuit Breaker (Ngắt mạch)
+- Bảo vệ hệ thống khỏi việc gọi tới dịch vụ lỗi liên tục.
+- Nếu MongoDB/Redis gặp lỗi, ngắt mạch tạm thời, chờ phục hồi rồi thử lại.
+- Có thể tích hợp `@nestjs/terminus` hoặc dùng thư viện như `opossum`.
 
 ## 📚 Tài liệu tham khảo
-
 - [NestJS CQRS Module](https://docs.nestjs.com/recipes/cqrs)
 - [Cache Manager Redis](https://www.npmjs.com/package/cache-manager-ioredis)
 - [JMeter CLI Testing](https://jmeter.apache.org/usermanual/)
+- [Rate Limiter for Express](https://www.npmjs.com/package/express-rate-limit)
+- [Circuit Breaker with Opossum](https://nodeshift.dev/opossum/)

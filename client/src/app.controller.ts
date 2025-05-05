@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Res,Param, Query, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Res, Param, Query, UseGuards, Render, Body } from '@nestjs/common';
 import { AppService } from './app.service';
 import { Response } from 'express';
 import { CustomRateLimitGuard } from './modules/rate-limit/rate-limit.guard';
@@ -9,19 +9,26 @@ export class AppController {
   constructor(private readonly appService: AppService) {}
 
   @Post('create')
-  async create(@Query ('url') url : string) {
+  async create(@Body('url') url: string) {
     const shortCode = await this.appService.createShortUrl(url);
-    return shortCode;
+    return { shortCode };
   }
 
   @Get('short/:id')
-  async getOrigin(@Param('id') id: string, @Res() res: Response) {
+  @Render('redirect-link')
+  async getOrigin(@Param('id') id: string) {
     const origin = await this.appService.getOriginUrl(id);
-    return res.send(origin);
+    return { origin };
   }
 
   @Get('test-circuit-breaker')
   async testCircuitBreaker() {
     return this.appService.testCircuitBreaker();
+  }
+
+  @Get('/')
+  @Render('create-link')
+  renderCreateLinkPage() {
+    return {};
   }
 }

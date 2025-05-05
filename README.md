@@ -92,6 +92,8 @@ mau deploy
 ```
 
 ## 📐 Các mẫu thiết kế
+Workflow khi thêm các architecture pattern
+![alt text](<Url-Shortener Workflow.png>)
 
 ### ✅ CQRS (Command & Query Responsibility Segregation)
 - Tách rõ ghi và đọc => tối ưu hoá xử lý.

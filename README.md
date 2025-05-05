@@ -2,17 +2,21 @@
 
 ## 📋 Mục lục
 1. [🧩 Tổng quan](#-tổng-quan)
-2. [⚙️ Kiến trúc hệ thống](#-kiến-trúc-hệ-thống)
-3. [🛠 Cài đặt & Khởi động](#-cài-đặt--khởi-động)
-4. [✅ Kiểm thử](#-kiểm-thử)
-5. [🧪 Kiểm thử hiệu năng với JMeter](#-kiểm-thử-hiệu-năng-với-jmeter)
-6. [📦 Triển khai với Docker](#-triển-khai-với-docker)
-7. [☁ Triển khai lên cloud (tùy chọn)](#-triển-khai-lên-cloud-tùy-chọn)
-8. [📐 Các mẫu thiết kế](#-các-mẫu-thiết-kế)
-9. [📚 Tài liệu tham khảo](#-tài-liệu-tham-khảo)
+2. [🌐 Web triển khai demo](#-Web-triển-khai-demo)
+3. [⚙️ Kiến trúc hệ thống](#-kiến-trúc-hệ-thống)
+4. [🛠 Cài đặt & Khởi động](#-cài-đặt--khởi-động)
+5. [✅ Kiểm thử](#-kiểm-thử)
+6. [🧪 Kiểm thử hiệu năng với JMeter](#-kiểm-thử-hiệu-năng-với-jmeter)
+7. [📦 Triển khai với Docker](#-triển-khai-với-docker)
+8. [☁ Triển khai lên cloud (tùy chọn)](#-triển-khai-lên-cloud-tùy-chọn)
+9. [📐 Các mẫu thiết kế](#-các-mẫu-thiết-kế)
+10. [📚 Tài liệu tham khảo](#-tài-liệu-tham-khảo)
 
 ## 🧩 Tổng quan
 Hệ thống rút gọn URL xây dựng dựa trên kiến trúc **CQRS (Command Query Responsibility Segregation)** và **Redis cache**, giúp tăng tốc độ phản hồi và hiệu năng.
+
+## 🌐 Web triển khai demo
+Truy cập bản chạy demo web tại địa chỉ: [http://riot360.net:4000/](http://riot360.net:4000/)
 
 ## ⚙️ Kiến trúc hệ thống
 - `Command`: Thao tác ghi với MongoDB.

@@ -8,7 +8,7 @@ export const getConfig = (configService: ConfigService) => ({
     doMain: configService.get<string>('URL_SHORTENER_DOMAIN', 'http://riot360.net:5000'),
   },
   circuitBreaker: {
-    circuitBreaker: configService.get<boolean>('CIRCUIT_BREAKER_ENABLED', true),
+    circuitBreaker: configService.get<string>('CIRCUIT_BREAKER_ENABLED', 'true') === 'true',
     timeout: configService.get<number>('CIRCUIT_BREAKER_TIMEOUT', 3000),
     errorThresholdPercentage: configService.get<number>('CIRCUIT_BREAKER_ERROR_THRESHOLD', 50),
     resetTimeout: configService.get<number>('CIRCUIT_BREAKER_RESET_TIMEOUT', 10000),

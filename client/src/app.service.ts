@@ -17,7 +17,9 @@ export class AppService {
     const config = getConfig(this.configService);
     const url = `${config.server.doMain}/create`;
     try {
-      if (config.circuitBreaker.circuitBreaker == true) {
+      if (config.circuitBreaker.circuitBreaker) {
+      console.log('circuitBreaker enable');
+
         const response = await this.circuitBreakerService.execute(() =>
           firstValueFrom(
             this.httpService.post(
@@ -33,6 +35,8 @@ export class AppService {
         );
         return response.data;
       } else {
+      console.log('circuitBreaker disenable');
+
         const response = await firstValueFrom(
           this.httpService.post(
             url,
@@ -57,7 +61,7 @@ export class AppService {
     const url = `${config.server.doMain}/short/${shortUrl}`;
     try {
       let responseResult = '';
-      if (config.circuitBreaker.circuitBreaker == true) {
+      if (config.circuitBreaker.circuitBreaker) {
         const response = await this.circuitBreakerService.execute(() =>
           firstValueFrom(this.httpService.get(url)),
         );

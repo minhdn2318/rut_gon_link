@@ -102,13 +102,20 @@ Workflow khi thêm các architecture pattern
 - Truy vấn đọc từ Redis trước, tăng tốc độ và giảm tải MongoDB.
 
 ### 🔃 Rate Limiting (Giới hạn tần suất truy cập)
-- Tránh abuse hệ thống (ví dụ spam POST link).
-- Thường dùng middleware (VD: `nestjs-rate-limiter`, `express-rate-limit`).
+- Bảo vệ hệ thống khỏi các cuộc tấn công DDoS bằng cách giới hạn số lượng request.
+- Cải thiện hiệu suất bằng cách ngăn chặn quá tải tài nguyên.
+- Sử dụng thư viện ThrottlerModule để giới hạn request đến Client.
 
 ### 🛡 Circuit Breaker (Ngắt mạch)
 - Bảo vệ hệ thống khỏi việc gọi tới dịch vụ lỗi liên tục.
 - Nếu MongoDB/Redis gặp lỗi, ngắt mạch tạm thời, chờ phục hồi rồi thử lại.
-- Có thể tích hợp `@nestjs/terminus` hoặc dùng thư viện như `opossum`.
+- Trong dự án đang sử dụng thư viện như `opossum` và chỉ ngắt dịch vụ khi chúng trả về mã lỗi 500.
+
+### 🔗 Sharding pattern (Option mở rộng)
+- Cải thiện hiệu suất: Phân chia dữ liệu thành nhiều Shard, hệ thống có thể thực hiện các truy vấn song song, giảm tải cho từng máy chủ và tăng tốc độ xử lý.
+- Tăng tính sẵn sàng và khả năng chịu lỗi: Nếu một shard gặp sự cố, hệ thống vẫn có thể hoạt động với các shard còn lại, giảm nguy cơ gián đoạn dịch vụ.
+- Tăng khả năng mở rộng: Thay vì lưu trữ tất cả dữ liệu trên một máy chủ duy nhất, Sharding Pattern cho phép phân bổ dữ liệu trên nhiều máy chủ, giúp mở rộng hệ thống một cách linh hoạt.
+Tuy nhiên, do cấu hình máy chủ thử nghiệm không đáp ứng được vì vậy nhóm đã để pattern này làm 1 option khi cần mở rộng hệ thống.
 
 ## 📚 Tài liệu tham khảo
 - [NestJS CQRS Module](https://docs.nestjs.com/recipes/cqrs)

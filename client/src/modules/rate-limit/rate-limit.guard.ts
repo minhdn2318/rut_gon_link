@@ -19,10 +19,8 @@ export class CustomRateLimitGuard extends ThrottlerGuard {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const config = getConfig(this.configService);
     if (config.rateLimit.rateLimiting) {
-      console.log('rate limiting enable');
       return super.canActivate(context);
     } else {
-      console.log('rate limiting disenable');
       return true;
     }
   }

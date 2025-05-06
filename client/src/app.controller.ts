@@ -3,7 +3,7 @@ import { AppService } from './app.service';
 import { Response } from 'express';
 import { CustomRateLimitGuard } from './modules/rate-limit/rate-limit.guard';
 
-@UseGuards(CustomRateLimitGuard)
+//@UseGuards(CustomRateLimitGuard)
 @Controller()
 export class AppController {
   constructor(private readonly appService: AppService) {}

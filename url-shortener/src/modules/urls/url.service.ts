@@ -47,7 +47,6 @@ export class UrlService {
 
       if (!url) throw new Error('Link not found');
       await this.cacheService.set(`short:${shortCode}`, url.originalUrl);
-      console.log(url.originalUrl);
       return url.originalUrl;
     };
 

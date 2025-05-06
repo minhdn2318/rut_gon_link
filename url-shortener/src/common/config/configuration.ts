@@ -10,6 +10,7 @@ export const getConfig = (configService: ConfigService) => ({
     ttl: configService.get<number>('CACHE_TTL', 3600), // 1 hour
     host: configService.get<string>('REDIS_HOST', 'redis'),
     port: configService.get<number>('REDIS_PORT', 6379),
+    password: configService.get<string>('REDIS_PASSWORD', 'urlShortener'),
   },
   patterns: {
     cqrs: configService.get<string>('CQRS_ENABLED', 'true') === 'true',

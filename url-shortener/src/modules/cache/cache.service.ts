@@ -12,6 +12,7 @@ export class CacheService {
     this.redis = new Redis({
       host: config.cache.host,
       port: config.cache.port,
+      password: config.cache.password
     });
   }
 

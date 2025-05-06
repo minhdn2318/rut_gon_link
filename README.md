@@ -58,7 +58,7 @@ npm run test:cov     # coverage
 
 - Disk: SSD 40GB
 
-- Network Interface: eth0 (MTU 1500), không xác định tốc độ do giới hạn ảo hóa (ethtool không trả về speed)
+- Network Interface: eth0 (MTU 1500), ước lượng tốc độ ~250 Mb/s do giới hạn trong môi trường ảo hóa
 
 - OS: Ubuntu 24.04 LTS
 
@@ -66,21 +66,21 @@ npm run test:cov     # coverage
 
 - ![Hiệu năng bản base](test tải/response-time-100CCU.png)
 
-- Phản hồi trung bình: 2.000–4.000ms
+- Phản hồi trung bình: 6.000ms
 
-- Spike cao: 8.000–12.000ms
+- Spike cao: 70.000ms
 
 - Ngưỡng chịu tải: ~80 request/s
 
 ### 🚀 Sau tối ưu CQRS + Redis:
 
-- Phản hồi: ~200–300ms
+- Phản hồi: ~1700 ms
 
 - Tăng hiệu suất ~8 lần
 
 - Không còn spike lớn
 
-- Ngưỡng chịu tải mới: ~500 request/s
+- Ngưỡng chịu tải mới: ~600 request/s
 
 ## 📦 Triển khai với Docker
 ```bash
